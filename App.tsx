@@ -25,6 +25,7 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('login');
   const [studentEmail, setStudentEmail] = useState<string>('');
   const [completedResults, setCompletedResults] = useState<ScenarioResult[]>([]);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // --- Game State ---
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState<number>(0);
@@ -49,14 +50,17 @@ export default function App() {
 
   // --- Login Handlers ---
   const handleLogin = (email: string) => {
-    // Regex: prenom.nom@istlm.org (case insensitive)
-    const regex = /^[a-zA-Z0-9.-]+@istlm\.org$/i;
-    if (regex.test(email)) {
-      setStudentEmail(email.toLowerCase());
-      setAppState('game');
-    } else {
-      alert("L'adresse email doit être au format prenom.nom@istlm.org");
+    const normalizedEmail = email.trim().toLowerCase();
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!regex.test(normalizedEmail)) {
+      setLoginError("Merci d'indiquer une adresse email valide.");
+      return;
     }
+
+    setLoginError(null);
+    setStudentEmail(normalizedEmail);
+    setAppState('game');
   };
 
   // --- Game Handlers ---
@@ -304,16 +308,24 @@ export default function App() {
                 <input
                   type="email"
                   id="email"
-                  className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="prenom.nom@istlm.org"
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${loginError ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300'}`}
+                  placeholder="Ex. prenom.nom@istlm.org"
                   value={studentEmail}
                   onChange={(e) => setStudentEmail(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleLogin(studentEmail)}
+                  autoComplete="email"
+                  autoFocus
                 />
               </div>
-              <p className="mt-1 text-xs text-slate-400">Format : prenom.nom@istlm.org</p>
+              <p className="mt-1 text-xs text-slate-400">Indique ton email scolaire (le format exact n'est plus bloquant).</p>
+              {loginError && (
+                <p className="mt-2 text-xs text-red-600 flex items-center gap-1">
+                  <AlertCircle size={14} />
+                  {loginError}
+                </p>
+              )}
             </div>
-            
+
             <button
               onClick={() => handleLogin(studentEmail)}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
