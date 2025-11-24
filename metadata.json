@@ -1,0 +1,5 @@
+{
+  "name": "Jeu de Centralisation TVA",
+  "description": "Un outil pédagogique interactif pour apprendre la centralisation de la TVA selon le plan comptable belge (PCMN).",
+  "requestFramePermissions": []
+}
