@@ -1,0 +1,7 @@
+/* Base styles for the TVA centralization app */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
